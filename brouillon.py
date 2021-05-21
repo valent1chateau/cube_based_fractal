@@ -32,3 +32,18 @@ for k in range(taille_cube):
                 cube_i_j_k.translate((taille_cube*i,taille_cube*j,taille_cube*k))
                 objects.append(cube_i_j_k)
 """
+
+
+
+"""
+taille_cube=taille_cube/3
+for k in range(-1,4,1):
+    for j in range(-1,4,1):
+        for i in range(-1,4,1):
+            if ((k==-1 or k==3) and i==1 and j==1) or ((i==-1 or i==3) and j==1 and k==1) or ((j==-1 or j==3) and i==1 and k==1):
+                print('cube dessiné à la position: ',(i,j,k))
+                cube_m_i_j_k=Cube(taille_cube,x,y,z)
+                cube_m_i_j_k.translate((taille_cube*i,taille_cube*j,taille_cube*k))
+                L.append(cube_m_i_j_k)
+Cube(taille_cube,x,y,z).fractale_eponge_menger_remix(taille_cube,m+1,n,L,x,y,z)
+"""

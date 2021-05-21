@@ -24,28 +24,28 @@ class Cube(Object3D):
             x,y,z+t_c,
             x+t_c,y,z+t_c,
             x+t_c,y+t_c,z+t_c,
-            x,x+t_c,z+t_c
+            x,y+t_c,z+t_c
             ]
 
                                    #Phase de ...
-        tab_indices = [0,2,1,0,2,3, #devant
+        tab_indices = [0,2,1,0,2,3, #derrière
                        0,7,3,0,7,4, #gauche
                        1,6,2,1,6,5, #droite
-                       0,5,1,0,5,4, #dessous
-                       3,6,2,3,6,7, #dessus
-                       4,6,7,4,6,5  #arriere
+                       0,5,1,0,5,4, #dessus
+                       3,6,2,3,6,7, #dessous
+                       4,6,7,4,6,5  #avant
                        ]
         """
         #Gestion des couleurs
         
-        p0=(x,y,z)
+        p0=(x,y,z) 
         p1=(x+t_c,y,z)
         p2=(x+t_c,y+t_c,z)
         p3=(x,y+t_c,z)
         p4=(x,y,z+t_c)
         p5=(x+t_c,y,z+t_c)
         p6=(x+t_c,y+t_c,z+t_c)
-        p7=(x,x+t_c,z+t_c)
+        p7=(x,y+t_c,z+t_c)
        
         vertices = []
         
@@ -81,27 +81,30 @@ class Cube(Object3D):
         addVertex(vertices,p7,green)
         
         
-        tab_indices = [0,2,1,0,2,3, #avant
-                       4,6,7,4,6,5  #arriere
+        tab_indices = [0,2,1,0,2,3, #arriere
+                       4,6,7,4,6,5  #avant
                       ]
-        
+        """
         tab2_indices=[0,5,1,0,5,4, #dessous
                       3,6,2,3,6,7, #dessus
                       ] 
+        
         tab3_indices=[1,6,2,1,6,5, #droite
                       0,7,3,0,7,4, #gauche
                       ]
-        """
+        
         tab1_indices=np.array([0,2,1,0,2,3, #avant
                               4,6,7,4,6,5  #arriere
                               ])
         """
-        tab2_indices=np.array([0,5,1,0,5,4, #dessous
-                               3,6,2,3,6,7, #dessus
+        tab2_indices=np.array([0,5,1,0,5,4, #dessus
+                               3,6,2,3,6,7, #dessous
                                ])
+        
         tab3_indices=np.array([1,6,2,1,6,5, #droite
                                0,7,3,0,7,4, #gauche
                                ])
+        
        
         #tab_indices.extend(tab1_indices+4)
         tab_indices.extend(tab2_indices+4)
@@ -159,7 +162,7 @@ class Cube(Object3D):
             Cube(taille_cube,x,y,z).fractale_eponge_menger_remix(taille_cube,m+1,n,L,x,y,z)
         else:
             taille_cube=taille_cube/3
-            """
+            
             #Avant? OK
             xa=x+taille_cube
             ya=y+taille_cube
@@ -183,7 +186,7 @@ class Cube(Object3D):
             cube3=Cube(taille_cube,xc,yc,zc)
             L.append(cube3)
             Cube(taille_cube,xc,yc,zc).fractale_eponge_menger_remix(taille_cube,m+1,n,L,xc,yc,zc)
-            """
+            
             #Droite? FAIS BUGUER
             xd=x+(3.0*taille_cube)
             yd=y+taille_cube
@@ -191,7 +194,7 @@ class Cube(Object3D):
             cube4=Cube(taille_cube,xd,yd,zd)
             L.append(cube4)
             Cube(taille_cube,xd,yd,zd).fractale_eponge_menger_remix(taille_cube,m+1,n,L,xd,yd,zd)
-            """
+            
             #Dessus? FAIS BUGUER
             xe=x+taille_cube
             ye=y+(3.0*taille_cube)
@@ -200,29 +203,14 @@ class Cube(Object3D):
             L.append(cube5)
             Cube(taille_cube,xe,ye,ze).fractale_eponge_menger_remix(taille_cube,m+1,n,L,xe,ye,ze)
             
-            #Dessous? OK
+            #Dessous? FAIS BUGUER
             xf=x+taille_cube
             yf=y-taille_cube
             zf=z+taille_cube
             cube6=Cube(taille_cube,xf,yf,zf)
             L.append(cube6)
             Cube(taille_cube,xf,yf,zf).fractale_eponge_menger_remix(taille_cube,m+1,n,L,xf,yf,zf)
-            """
             
-
-    """
-        taille_cube=taille_cube/3
-        for k in range(-1,4,1):
-            for j in range(-1,4,1):
-                for i in range(-1,4,1):
-                    if ((k==-1 or k==3) and i==1 and j==1) or ((i==-1 or i==3) and j==1 and k==1) or ((j==-1 or j==3) and i==1 and k==1):
-                        print('cube dessiné à la position: ',(i,j,k))
-                        cube_m_i_j_k=Cube(taille_cube,x,y,z)
-                        cube_m_i_j_k.translate((taille_cube*i,taille_cube*j,taille_cube*k))
-                        L.append(cube_m_i_j_k)
-        Cube(taille_cube,x,y,z).fractale_eponge_menger_remix(taille_cube,m+1,n,L,x,y,z)
-    """
-
     
     def updateTRSMatrices(self):
         time=glfw.get_time()
@@ -240,14 +228,14 @@ def main():
         return
     
     #Angle de vue (angle de la "caméra") (x,y,z)
-    window.initViewMatrix(eye=[-5,0,30])
+    window.initViewMatrix(eye=[0,0,20])
     
     #Parametre
-    taille_cube = 9
-    nombre_generation = 5
-    x=0
+    taille_cube = 8
+    nombre_generation = 3
+    x=8
     y=0
-    z=3
+    z=0
     #Liste d'objet qu'on veut afficher
     objects=[]
     Cube(taille_cube,x,y,z).fractale_eponge_menger_remix(taille_cube,0,nombre_generation+1,objects,x,y,z)
