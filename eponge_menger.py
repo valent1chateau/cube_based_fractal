@@ -1,224 +1,146 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed May 19 05:23:37 2021
+Created on Wed Mar 28 15:23:37 2021
 
-@author: Antoine-fusee
+@authors: Valention CASTELLON - Stephane IOVLEFF - Antoine BENIS
 """
 
 from opengl_fcts import *
 from math import *
+from random import *
 
 
 class Cube(Object3D):
-    def __init__(self,taille_cube,x,y,z):
+    # Détails des arguments
+    # taille_cube : Taille du cube que l'on souhaite créer
+    # x,y,z : Position de ce meme cube dans l'espace
+    # couleur : Couleur de ce meme cube
+    
+    def __init__(self,taille_cube,x,y,z,couleur):
         super().__init__()
         
         t_c=taille_cube
         
-        """
-        vertices = [
-            x,y,z,
-            x+t_c,y,z,
-            x+t_c,y+t_c,z,
-            x,y+t_c,z,
-            x,y,z+t_c,
-            x+t_c,y,z+t_c,
-            x+t_c,y+t_c,z+t_c,
-            x,y+t_c,z+t_c
-            ]
-
-                                   #Phase de ...
-        tab_indices = [0,2,1,0,2,3, #derrière
-                       0,7,3,0,7,4, #gauche
-                       1,6,2,1,6,5, #droite
-                       0,5,1,0,5,4, #dessus
-                       3,6,2,3,6,7, #dessous
-                       4,6,7,4,6,5  #avant
-                       ]
-        """
-        #Gestion des couleurs
+        #Ajout des sommets dans l'espace
+        vertices = [                # Sommet situé par rapport au cube en position ...
+            x,y,z,                  # Top Arriere Gauche
+            x+t_c,y,z,              # Top Arriere Droit
+            x+t_c,y+t_c,z,          # Bottom Arriere Droit
+            x,y+t_c,z,              # Bottom Arriere Gauche
+            x,y,z+t_c,              # Top Avant Gauche
+            x+t_c,y,z+t_c,          # Top Avant Droit
+            x+t_c,y+t_c,z+t_c,      # Bottom Avant Droit
+            x,y+t_c,z+t_c           # Bottom Avant Gauche
+            ]                       # quand la caméra est situé en position x=0,y=0,z=30
         
-        p0=(x,y,z) 
-        p1=(x+t_c,y,z)
-        p2=(x+t_c,y+t_c,z)
-        p3=(x,y+t_c,z)
-        p4=(x,y,z+t_c)
-        p5=(x+t_c,y,z+t_c)
-        p6=(x+t_c,y+t_c,z+t_c)
-        p7=(x,y+t_c,z+t_c)
-       
-        vertices = []
+                                    # Phase de ...
+        tab_indices = [0,2,1,0,2,3, # derrière,
+                       0,7,3,0,7,4, # gauche,
+                       1,6,2,1,6,5, # droite,
+                       0,5,1,0,5,4, # dessus,
+                       3,6,2,3,6,7, # dessous,
+                       4,6,7,4,6,5  # avant...
+                       ]            # quand la caméra est situé en position x=0,y=0,z=30
         
-        red=(2*t_c,0.0,0.0)
-        blue=(0.0,0.0,2*t_c)
-        green=(0.0,2*t_c,0.0)
-        
-        addVertex(vertices,p0,red)
-        addVertex(vertices,p1,red)
-        addVertex(vertices,p2,red)
-        addVertex(vertices,p3,red)
-        addVertex(vertices,p4,red)
-        addVertex(vertices,p5,red)
-        addVertex(vertices,p6,red)
-        addVertex(vertices,p7,red)
-        
-        addVertex(vertices,p0,blue)
-        addVertex(vertices,p1,blue)
-        addVertex(vertices,p2,blue)
-        addVertex(vertices,p3,blue)
-        addVertex(vertices,p4,blue)
-        addVertex(vertices,p5,blue)
-        addVertex(vertices,p6,blue)
-        addVertex(vertices,p7,blue)
-        
-        addVertex(vertices,p0,green)
-        addVertex(vertices,p1,green)
-        addVertex(vertices,p2,green)
-        addVertex(vertices,p3,green)
-        addVertex(vertices,p4,green)
-        addVertex(vertices,p5,green)
-        addVertex(vertices,p6,green)
-        addVertex(vertices,p7,green)
-        
-        
-        tab_indices = [0,2,1,0,2,3, #arriere
-                       4,6,7,4,6,5  #avant
-                      ]
-        """
-        tab2_indices=[0,5,1,0,5,4, #dessous
-                      3,6,2,3,6,7, #dessus
-                      ] 
-        
-        tab3_indices=[1,6,2,1,6,5, #droite
-                      0,7,3,0,7,4, #gauche
-                      ]
-        
-        tab1_indices=np.array([0,2,1,0,2,3, #avant
-                              4,6,7,4,6,5  #arriere
-                              ])
-        """
-        tab2_indices=np.array([0,5,1,0,5,4, #dessus
-                               3,6,2,3,6,7, #dessous
-                               ])
-        
-        tab3_indices=np.array([1,6,2,1,6,5, #droite
-                               0,7,3,0,7,4, #gauche
-                               ])
-        
-       
-        #tab_indices.extend(tab1_indices+4)
-        tab_indices.extend(tab2_indices+4)
-        tab_indices.extend(tab3_indices+4)
-        
-        
+        # Construction du cube à l'aide de la table des vertices
+        # de la table des indices et de la primitives graphique
+        # openGL : GL_TRIANGLES
         primitives = [(GL_TRIANGLES,tab_indices)]
+        self.Shader=PositionShader(vertices,primitives,color=(couleur,couleur,couleur))
         
-        self.Shader=ColorPositionShader(vertices, primitives)
-        #self.Shader=PositionShader(vertices,primitives,color=(1.0,1.0,1.0))
+    # Détails des arguments
+    # taille_cube : taille du cube de génération 0 (le plus gros de la structure finale)
+    # m : numéro de la génération à construire (m=1 correspondra aux cubes de génération 1)
+    # n : nombre total de génération souhaitée
+    # L : Liste vide qui va contenir les futurs cubes crées
+    # x,y,z : Position du cube de génération 0 (premier cube construit) dans l'espace
+    # flag : flag permettant de ne pas constuire de cube derriere une face d'un cube de génération
+    #        précédente (exemple : https://imgur.com/a/BfJnfIO )
+    
+    # Resultat de la fonction :
+    # Une liste L contenant l'ensemble des cubes crées
+    
+    def fractale_eponge_menger_remix(self,taille_cube,m,n,L,x,y,z,flag):
+        if m==n:     # Quand on arrive au numéro de la génération souhaité, la fonction s'arrete
+                     # Comme la création commence à la génération 0, on souhaite alors crée m-1 générations
+                     # La fonction est donc finie
+            return L #La fonction renvoit la liste des objets crées
         
-    """
-    def avant(self,taille_cube,x,y,z):
-        (self.x,self.y,self.z).translate((x+t/3,y+t/3,z-t/3))
-        return x,y,z
-
-    def arriere(self,x,y,z,t):
-        self.x=x+t/3
-        self.y=y+t/3
-        self.z=z+t
-        return x,y,z
-
-    def gauche(self,taille_cube,x,y,z):
-        (self.x,self.y,self.z).translate((x-t/3,y+t/3,z+t/3))
-        print(x)
-        print(y)
-        print(z)
-        return x,y,z
-
-    def droite(self,x,y,z,t):
-        self.x=x+t
-        self.y=y+t/3
-        self.z=z+t/3
-        return x,y,z
-    
-    def dessous(self,x,y,z,t):
-        self.x=x+t/3
-        self.y=y-t/3
-        self.z=z+t/3
-        return x,y,z
-    
-    def dessus(self,x,y,z,t):
-        self.x=x+t/3
-        self.y=y+t
-        self.z=z+t/3
-        return x,y,z
-    """
-    
-    def fractale_eponge_menger_remix(self,taille_cube,m,n,L,x,y,z):
-        if m==n:
-            return L
         elif m==0:
-            cube=Cube(taille_cube,x,y,z)
-            L.append(cube)
-            Cube(taille_cube,x,y,z).fractale_eponge_menger_remix(taille_cube,m+1,n,L,x,y,z)
+            # Cas de la premiere génération
+            cube=Cube(taille_cube,x,y,z,(m+1.0)/n)  #On constuit le cube de génération 0
+            L.append(cube)                          #On l'ajoute à la liste des objets que la fonction renverra
+            #On appelle de nouveau la fonction de manière récursive de génération 1 (car m=0 dans cette partie du code)
+            Cube(taille_cube,x,y,z,(m+1.0)/n).fractale_eponge_menger_remix(taille_cube,m+1,n,L,x,y,z,0)
         else:
-            taille_cube=taille_cube/3
+            # Cas de la génération située entre 2 inclus et m-1
+            taille_cube=taille_cube/3 # La taille du cube de gén m est trois plus petite que celle de gen m-1
+            # On va créer ensuite 5 ou 6 cubes suplémentaires que l'on va ensuite placer dans l'espace
+            # On va crée 6 cubes pour la génération 1 car les 6 cubes de la génération 1 seront visible à partir d'un certain angle de vue
+            # Cependant, à partir de la génération 2, il faut crée uniquement 5 cubes supplémentaires sur chaque cube crée à la génération précédente
+            # cf. "flag" dans la partie "Détails des arguments"
+            if flag!=2:
+                #Coordonnée du nouveau cube
+                xa=x+taille_cube
+                ya=y+taille_cube
+                za=z-taille_cube
+                cube1=Cube(taille_cube,xa,ya,za,(m+1.0)/n)  # On crée le nouveau cube
+                L.append(cube1)                             # On l'ajoute à la liste des objets quye la fonction renverra
+                #On appelle de nouveau la fonction de manière récursive de génération m+1
+                Cube(taille_cube,xa,ya,za,(m+1.0)/n).fractale_eponge_menger_remix(taille_cube,m+1,n,L,xa,ya,za,1)
             
-            #Avant? OK
-            xa=x+taille_cube
-            ya=y+taille_cube
-            za=z-taille_cube
-            cube1=Cube(taille_cube,xa,ya,za)
-            L.append(cube1)
-            Cube(taille_cube,xa,ya,za).fractale_eponge_menger_remix(taille_cube,m+1,n,L,xa,ya,za)
+            if flag!=1:
+                xb=x+taille_cube
+                yb=y+taille_cube
+                zb=z+(3.0*taille_cube)
+                cube2=Cube(taille_cube,xb,yb,zb,(m+1.0)/n)
+                L.append(cube2)
+                Cube(taille_cube,xb,yb,zb,(m+1.0)/n).fractale_eponge_menger_remix(taille_cube,m+1,n,L,xb,yb,zb,2)
             
-            #Arriere? OK
-            xb=x+taille_cube
-            yb=y+taille_cube
-            zb=z+(3.0*taille_cube)
-            cube2=Cube(taille_cube,xb,yb,zb)
-            L.append(cube2)
-            Cube(taille_cube,xb,yb,zb).fractale_eponge_menger_remix(taille_cube,m+1,n,L,xb,yb,zb)
+            if flag!=4:
+                #Gauche
+                xc=x-taille_cube
+                yc=y+taille_cube
+                zc=z+taille_cube
+                cube3=Cube(taille_cube,xc,yc,zc,(m+1.0)/n)
+                L.append(cube3)
+                Cube(taille_cube,xc,yc,zc,(m+1.0)/n).fractale_eponge_menger_remix(taille_cube,m+1,n,L,xc,yc,zc,3)
             
-            #Gauche? FAIS BUGUER
-            xc=x-taille_cube
-            yc=y+taille_cube
-            zc=z+taille_cube
-            cube3=Cube(taille_cube,xc,yc,zc)
-            L.append(cube3)
-            Cube(taille_cube,xc,yc,zc).fractale_eponge_menger_remix(taille_cube,m+1,n,L,xc,yc,zc)
+            if flag!=3:
+                #Droite
+                xd=x+(3.0*taille_cube)
+                yd=y+taille_cube
+                zd=z+taille_cube
+                cube4=Cube(taille_cube,xd,yd,zd,(m+1.0)/n)
+                L.append(cube4)
+                Cube(taille_cube,xd,yd,zd,(m+1.0)/n).fractale_eponge_menger_remix(taille_cube,m+1,n,L,xd,yd,zd,4)
             
-            #Droite? FAIS BUGUER
-            xd=x+(3.0*taille_cube)
-            yd=y+taille_cube
-            zd=z+taille_cube
-            cube4=Cube(taille_cube,xd,yd,zd)
-            L.append(cube4)
-            Cube(taille_cube,xd,yd,zd).fractale_eponge_menger_remix(taille_cube,m+1,n,L,xd,yd,zd)
+            if flag!=6:
+                #Dessus
+                xe=x+taille_cube
+                ye=y+(3.0*taille_cube)
+                ze=z+taille_cube
+                cube5=Cube(taille_cube,xe,ye,ze,(m+1.0)/n)
+                L.append(cube5)
+                Cube(taille_cube,xe,ye,ze,(m+1.0)/n).fractale_eponge_menger_remix(taille_cube,m+1,n,L,xe,ye,ze,5)
             
-            #Dessus? FAIS BUGUER
-            xe=x+taille_cube
-            ye=y+(3.0*taille_cube)
-            ze=z+taille_cube
-            cube5=Cube(taille_cube,xe,ye,ze)
-            L.append(cube5)
-            Cube(taille_cube,xe,ye,ze).fractale_eponge_menger_remix(taille_cube,m+1,n,L,xe,ye,ze)
+            if flag!=5:
+                #Dessous
+                xf=x+taille_cube
+                yf=y-taille_cube
+                zf=z+taille_cube
+                cube6=Cube(taille_cube,xf,yf,zf,(m+1.0)/n)
+                L.append(cube6)
+                Cube(taille_cube,xf,yf,zf,(m+1.0)/n).fractale_eponge_menger_remix(taille_cube,m+1,n,L,xf,yf,zf,6)
             
-            #Dessous? FAIS BUGUER
-            xf=x+taille_cube
-            yf=y-taille_cube
-            zf=z+taille_cube
-            cube6=Cube(taille_cube,xf,yf,zf)
-            L.append(cube6)
-            Cube(taille_cube,xf,yf,zf).fractale_eponge_menger_remix(taille_cube,m+1,n,L,xf,yf,zf)
-            
-    
+    """
+    #Rotation de l'objet 3D
     def updateTRSMatrices(self):
         time=glfw.get_time()
         rot_x = pyrr.Matrix44.from_x_rotation(0.6 * time)
-        rot_y = pyrr.Matrix44.from_y_rotation(0.8 * time) 
-
+        rot_y = pyrr.Matrix44.from_y_rotation(0.8 * time)
         self.R=np.matmul(rot_x,rot_y)
-    
+    """
 
 def main():
     
@@ -228,20 +150,22 @@ def main():
         return
     
     #Angle de vue (angle de la "caméra") (x,y,z)
-    window.initViewMatrix(eye=[0,0,20])
+    window.initViewMatrix(eye=[0,0,30])
     
-    #Parametre
-    taille_cube = 8
-    nombre_generation = 3
-    x=8
+    #Parametres de la fractale
+    taille_cube = 6
+    nombre_generation = 3   #Eviter d'aller au dessus de 5
+    #Position du cube de génération 0
+    x=0
     y=0
     z=0
-    #Liste d'objet qu'on veut afficher
+    
     objects=[]
-    Cube(taille_cube,x,y,z).fractale_eponge_menger_remix(taille_cube,0,nombre_generation+1,objects,x,y,z)
+    Cube(taille_cube,x,y,z,(0.0+1.0)/1.0).fractale_eponge_menger_remix(taille_cube,0,nombre_generation+1,objects,x,y,z,0)
 
     #Rendu visuel de la liste d'objet
     window.render(objects)
+    
     
 if __name__ == "__main__":
     main()
