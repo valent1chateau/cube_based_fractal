@@ -33,7 +33,7 @@ class Window:
         glfw.make_context_current(self.Window)
 
         self.updateProjectionMatrix(width,height)
-
+        
 
     def updateProjectionMatrix(self,width,height):
         fov = 60

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Mar 28 15:23:37 2021
+Created on Wed Apr 28 15:23:37 2021
 
 @authors: Valention CASTELLON - Stephane IOVLEFF - Antoine BENIS
 """
@@ -140,24 +140,24 @@ class Cube(Object3D):
         rot_x = pyrr.Matrix44.from_x_rotation(0.6 * time)
         rot_y = pyrr.Matrix44.from_y_rotation(0.8 * time)
         self.R=np.matmul(rot_x,rot_y)
-    """
+    """ 
 
 def main():
     
     #Taille et titre de la fenetre
-    window=Window(1900,1080,"Projet - Eponge de Menger remix")
+    window=Window(800,600,"Projet IN55 - Fractale Cube")
     if not window.Window:
         return
     
     #Angle de vue (angle de la "caméra") (x,y,z)
-    window.initViewMatrix(eye=[0,0,30])
+    window.initViewMatrix(eye=[0,0,20])
     
     #Parametres de la fractale
     taille_cube = 6
-    nombre_generation = 3   #Eviter d'aller au dessus de 5
+    nombre_generation = 5   #Eviter d'aller au dessus de 5
     #Position du cube de génération 0
-    x=0
-    y=0
+    x=-3
+    y=-3
     z=0
     
     objects=[]
