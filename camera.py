@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Jun  8 02:58:16 2021
+Created on Tue May  12 15:58:16 2021
 
-@author: Antoine-fusee
+@authors: Valentin CASTELLON - Stephane IOVLEFF - Antoine BENIS
 """
 
 from pyrr import Vector3, vector, vector3, matrix44
@@ -15,7 +15,6 @@ class Camera:
         self.camera_up = Vector3([0.0, 1.0, 0.0])
         self.camera_right = Vector3([1.0, 0.0, 0.0])
 
-        self.mouse_sensitivity = 0.5
         self.jaw = -90
         self.pitch = 0
 
@@ -23,17 +22,17 @@ class Camera:
         return matrix44.create_look_at(self.camera_pos, self.camera_pos + self.camera_front, self.camera_up)
 
     def process_mouse_movement(self, xoffset, yoffset, constrain_pitch=True):
-        xoffset *= self.mouse_sensitivity
-        yoffset *= self.mouse_sensitivity
+        xoffset *= self.sensibilite_souris
+        yoffset *= self.sensibilite_souris
 
         self.jaw += xoffset
         self.pitch += yoffset
 
         if constrain_pitch:
-            if self.pitch > 45:
-                self.pitch = 45
-            if self.pitch < -45:
-                self.pitch = -45
+            if self.pitch > 90:
+                self.pitch = 90
+            if self.pitch < -90:
+                self.pitch = -90
 
         self.update_camera_vectors()
 

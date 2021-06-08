@@ -9,7 +9,6 @@ from opengl_fcts import *
 from math import *
 from random import *
 
-
 class Cube(Object3D):
     # Détails des arguments
     # taille_cube : Taille du cube que l'on souhaite créer
@@ -65,7 +64,7 @@ class Cube(Object3D):
                      # Comme la création commence à la génération 0, on souhaite alors crée m-1 générations
                      # La fonction est donc finie
             return L #La fonction renvoit la liste des objets crées
-        
+
         elif m==0:
             # Cas de la premiere génération
             cube=Cube(taille_cube,x,y,z,(m+1.0)/n)  #On constuit le cube de génération 0
@@ -81,6 +80,7 @@ class Cube(Object3D):
             # cf. "flag" dans la partie "Détails des arguments"
             if flag!=2:
                 #Coordonnée du nouveau cube
+                #Avant
                 xa=x+taille_cube
                 ya=y+taille_cube
                 za=z-taille_cube
@@ -90,6 +90,7 @@ class Cube(Object3D):
                 Cube(taille_cube,xa,ya,za,(m+1.0)/n).fractale_eponge_menger_remix(taille_cube,m+1,n,L,xa,ya,za,1)
             
             if flag!=1:
+                #Arriere
                 xb=x+taille_cube
                 yb=y+taille_cube
                 zb=z+(3.0*taille_cube)
@@ -142,36 +143,39 @@ class Cube(Object3D):
         self.R=np.matmul(rot_x,rot_y)
     """
 
-
 def main():
     
-    #Taille et titre de la fenetre
-    window=Window(800,600,"Projet IN55 - Fractale Cube")
+    #************* PARAMETRAGE *************
+    
+    #**** FENETRE ****
+    longueur=1200
+    hauteur=800
+    position_fenentre_x=200
+    position_fenetre_y=200
+
+    #**** CAMERA ****
+    cam.sensibilite_souris = 1
+    
+    #**** CUBE FRACTALE ****
+    taille_cube = 6
+    nombre_generation = 3 #Eviter d'aller au dessus de 5
+    x=-3 #Position du cube de génération 0
+    y=3
+    z=0
+    
+    #Lancement de la fenetre
+    window=Window(longueur,hauteur,"Projet IN55 - Fractale Cube",position_fenentre_x,position_fenetre_y)
     if not window.Window:
         return
-    
-    #Angle de vue (angle de la "caméra") (x,y,z)
-    #x_cam=0
-    #y_cam=0
-    #z_cam=20
-    #window.initViewMatrix(eye=[x_cam,y_cam,z_cam])
-    window.initViewMatrix()
-    
-    #Parametres de la fractale
-    taille_cube = 6
-    nombre_generation = 3  #Eviter d'aller au dessus de 5
-    #Position du cube de génération 0
-    x=-3
-    y=-3
-    z=0
+
+    #Initialisation de la caméra
+    window.viewMatrix()
     
     objects=[]
     Cube(taille_cube,x,y,z,(0.0+1.0)/1.0).fractale_eponge_menger_remix(taille_cube,0,nombre_generation+1,objects,x,y,z,0)
 
     #Rendu visuel de la liste d'objet
-    
     window.render(objects)
-    
     
 if __name__ == "__main__":
     main()

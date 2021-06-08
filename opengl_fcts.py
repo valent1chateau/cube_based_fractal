@@ -5,7 +5,6 @@ Created on Wed Mar 11 16:24:18 2020
 @author: LAURI
 """
 
-
 import glfw
 from OpenGL.GL import *
 import OpenGL.GL.shaders
@@ -15,13 +14,14 @@ import math
 from camera import Camera
 
 nb_vert_infos_size=6
-cam = Camera()
 first_mouse = True
 lastX, lastY = 400, 300
 left, right, forward, backward = False, False, False, False
+cam=Camera()
 
 class Window:
-    def __init__(self,width,height,title):
+    def __init__(self,width,height,title,pos_fen_x,pos_fen_y):
+        
         self.Window=None
 
         if not glfw.init():
@@ -77,8 +77,8 @@ class Window:
             lastY = ypos
             cam.process_mouse_movement(xoffset, yoffset)
 
-          
-        glfw.set_window_pos(self.Window, 200, 200) 
+        glfw.set_window_pos(self.Window, pos_fen_x, pos_fen_y) 
+        glfw.set_cursor_pos(self.Window, width/2, height/2)
         glfw.set_cursor_pos_callback(self.Window, mouse_look_clb)
         glfw.set_cursor_enter_callback(self.Window, mouse_enter_clb)
         glfw.set_key_callback(self.Window, key_input_clb)
@@ -112,20 +112,22 @@ class Window:
                 )
         glViewport(0, 0, width, height)
 
-    
-    def initViewMatrix(self):
+
+    def viewMatrix(self):
         self.ViewMatrix = cam.get_view_matrix()
         
-
+        
     def render(self,objects):
         glClearColor(0.0, 0.0, 0.0, 1.0)
         glEnable(GL_DEPTH_TEST)
         glDisable(GL_CULL_FACE)
 
         while not glfw.window_should_close(self.Window):
+            
             v=self.ViewMatrix
             p=self.ProjectionMatrix
             vp=np.matmul(v,p)
+            
             glfw.poll_events()
             self.do_movement()
             
@@ -133,7 +135,7 @@ class Window:
 
             w, h = glfw.get_framebuffer_size(self.Window)
             self.updateProjectionMatrix(w,h)
-            self.initViewMatrix()
+            self.viewMatrix()
             
             for o in objects:
                 o.updateTRSMatrices()
@@ -147,7 +149,6 @@ class Window:
 
     def CloseWindow(self):
         glfw.terminate()
-
 
 
 class Object3D:
