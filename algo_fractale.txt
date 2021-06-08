@@ -1,0 +1,84 @@
+Algorithme de creation de fractale cube
+
+On considere les fonctions suivantes :
+• creerCube(taille_cube,x,y,z,couleur) qui permet de creer un cube
+• ajouterQueue(e,L) qui permet l'ajout de l'élément e à la fin de la liste L
+
+Données :
+• taille_cube : la taille du cube de génération 0
+• m : numéro de la génération à constriure (vaut 0 au lancement de l'algorithme)
+• n : nombre total de génération à constuire
+• L : une liste vide
+• x, y, z: position d'une vertice du cube de génération 0
+• flag : entier servant de flag pour ne pas constuire de cube derriere une face
+
+Résultat :
+• L : une liste contenant les données de tout les cubes crées (position, taille, ...)
+
+creerFractale(taille_cube, m, n, L, x, y, z, flag)
+DEBUT
+	IF m==n THEN
+		return L
+	ELSE
+		IF m==0 THEN
+			cube :=  creerCube(taille_cube,x,y,z,(m+1)/n)
+			ajouterQueue(cube, L)
+			creerFractale(taille_cube,m+1,n,L,x,y,z,0)
+		ELSE
+			taille_cube := taille_cube/3
+			IF flag != 2 THEN
+				xa := x + taille_cube
+				ya := y + taille_cube
+				za := z - taille_cube
+				cube1 := creerCube(taille_cube,xa,ya,za,(m+1)/n)
+				ajouterQueue(cube1, L)
+				creerFractale(taille_cube,m+1,n,L,xa,ya,za,1)
+			ELSE
+				IF flag !=1 THEN
+					xb := x + taille_cube
+					yb := y + taille_cube
+					zb := z + (3.0 * taille_cube)
+					cube2 := creerCube(taille_cube,xb,yb,zb,(m+1)/n)
+					ajouterQueue(cube2, L)
+					creerFractale(taille_cube,m+1,n,L,xb,yb,zb,2)
+				ELSE
+					IF flag !=4 THEN
+						xc := x - taille_cube
+						yc := y + taille_cube
+						zc := z + taille_cube
+						cube3 := creerCube(taille_cube,xc,yc,zc,(m+1)/n)
+						ajouterQueue(cube3, L)
+						creerFractale(taille_cube,m+1,n,L,xb,yb,zb,3)
+					ELSE 
+						IF flag !=3 THEN
+							xd := x + (3.0*taille_cube)
+							yd := y + taille_cube
+							zd := z + taille_cube
+							cube4 := creerCube(taille_cube,xd,yd,zd,(m+1)/n)
+							ajouterQueue(cube4, L)
+							creerFractale(taille_cube,m+1,n,L,xd,yd,zd,4)
+						ELSE
+							IF flag !=6 THEN
+								xe := x + taille_cube
+								ye := y + (3.0*taille_cube)
+								ze := z + taille_cube
+								cube5 := creerCube(taille_cube,xe,ye,ze,(m+1)/n)
+								ajouterQueue(cube5, L)
+								creerFractale(taille_cube,m+1,n,L,xe,ye,ze,5)
+							ELSE
+								IF flag !=5 THEN
+									xf := x + taille_cube
+									yf := y - taille_cube
+									zf := z + taille_cube
+									cube6 := creerCube(taille_cube,xf,yf,zf,(m+1)/n)
+									ajouterQueue(cube6, L)
+									creerFractale(taille_cube,m+1,n,L,xf,yf,zf,3)
+								ENDIF
+							ENDIF
+						ENDIF
+					ENDIF
+				ENDIF
+			ENDIF
+		ENDIF
+	ENDIF
+FIN

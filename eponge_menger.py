@@ -2,7 +2,7 @@
 """
 Created on Wed Apr 28 15:23:37 2021
 
-@authors: Valention CASTELLON - Stephane IOVLEFF - Antoine BENIS
+@authors: Valentin CASTELLON - Stephane IOVLEFF - Antoine BENIS
 """
 
 from opengl_fcts import *
@@ -140,7 +140,8 @@ class Cube(Object3D):
         rot_x = pyrr.Matrix44.from_x_rotation(0.6 * time)
         rot_y = pyrr.Matrix44.from_y_rotation(0.8 * time)
         self.R=np.matmul(rot_x,rot_y)
-    """ 
+    """
+
 
 def main():
     
@@ -150,11 +151,15 @@ def main():
         return
     
     #Angle de vue (angle de la "caméra") (x,y,z)
-    window.initViewMatrix(eye=[0,0,20])
+    #x_cam=0
+    #y_cam=0
+    #z_cam=20
+    #window.initViewMatrix(eye=[x_cam,y_cam,z_cam])
+    window.initViewMatrix()
     
     #Parametres de la fractale
     taille_cube = 6
-    nombre_generation = 5   #Eviter d'aller au dessus de 5
+    nombre_generation = 3  #Eviter d'aller au dessus de 5
     #Position du cube de génération 0
     x=-3
     y=-3
@@ -164,6 +169,7 @@ def main():
     Cube(taille_cube,x,y,z,(0.0+1.0)/1.0).fractale_eponge_menger_remix(taille_cube,0,nombre_generation+1,objects,x,y,z,0)
 
     #Rendu visuel de la liste d'objet
+    
     window.render(objects)
     
     

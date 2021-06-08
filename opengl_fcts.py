@@ -12,10 +12,13 @@ import OpenGL.GL.shaders
 import numpy as np
 import pyrr
 import math
-
+from camera import Camera
 
 nb_vert_infos_size=6
-
+cam = Camera()
+first_mouse = True
+lastX, lastY = 400, 300
+left, right, forward, backward = False, False, False, False
 
 class Window:
     def __init__(self,width,height,title):
@@ -30,10 +33,69 @@ class Window:
             glfw.terminate()
             return
 
-        glfw.make_context_current(self.Window)
-
-        self.updateProjectionMatrix(width,height)
+        def key_input_clb(self, key, scancode, action, mode):
+            global left, right, forward, backward
+            if key == glfw.KEY_ESCAPE and action == glfw.PRESS:
+                glfw.set_window_should_close(self, True)
         
+            if key == glfw.KEY_W and action == glfw.PRESS:
+                forward = True
+            elif key == glfw.KEY_W and action == glfw.RELEASE:
+                forward = False
+            if key == glfw.KEY_S and action == glfw.PRESS:
+                backward = True
+            elif key == glfw.KEY_S and action == glfw.RELEASE:
+                backward = False
+            if key == glfw.KEY_A and action == glfw.PRESS:
+                left = True
+            elif key == glfw.KEY_A and action == glfw.RELEASE:
+                left = False
+            if key == glfw.KEY_D and action == glfw.PRESS:
+                right = True
+            elif key == glfw.KEY_D and action == glfw.RELEASE:
+                right = False
+            if key in [glfw.KEY_W, glfw.KEY_S, glfw.KEY_D, glfw.KEY_A] and action == glfw.RELEASE:
+                left, right, forward, backward = False, False, False, False
+
+
+        def mouse_enter_clb(self,entered):
+            global first_mouse
+    
+            if entered:
+                first_mouse = False
+            else:
+                first_mouse = True
+        
+        def mouse_look_clb(self,xpos,ypos):
+            global lastX, lastY
+            if first_mouse:
+                lastX = xpos
+                lastY = ypos
+            xoffset = xpos - lastX
+            yoffset = lastY - ypos
+            lastX = xpos
+            lastY = ypos
+            cam.process_mouse_movement(xoffset, yoffset)
+
+          
+        glfw.set_window_pos(self.Window, 200, 200) 
+        glfw.set_cursor_pos_callback(self.Window, mouse_look_clb)
+        glfw.set_cursor_enter_callback(self.Window, mouse_enter_clb)
+        glfw.set_key_callback(self.Window, key_input_clb)
+        
+        glfw.make_context_current(self.Window)
+        self.updateProjectionMatrix(width,height)
+       
+
+    def do_movement(self):
+        if left:
+            cam.process_keyboard("LEFT", 0.05)
+        if right:
+            cam.process_keyboard("RIGHT", 0.05)
+        if forward:
+            cam.process_keyboard("FORWARD", 0.05)
+        if backward:
+            cam.process_keyboard("BACKWARD", 0.05)  
 
     def updateProjectionMatrix(self,width,height):
         fov = 60
@@ -48,47 +110,44 @@ class Window:
                 near_clip,
                 far_clip
                 )
-
         glViewport(0, 0, width, height)
 
-
-    def initViewMatrix(self,eye=[0,0,2]):
-        eye=np.array(eye)
-        target=np.array([0,0,0])
-        up=np.array([0,1,0])
-        self.ViewMatrix = pyrr.matrix44.create_look_at(eye,target,up)
-
+    
+    def initViewMatrix(self):
+        self.ViewMatrix = cam.get_view_matrix()
+        
 
     def render(self,objects):
         glClearColor(0.0, 0.0, 0.0, 1.0)
         glEnable(GL_DEPTH_TEST)
         glDisable(GL_CULL_FACE)
 
-        v=self.ViewMatrix
-        p=self.ProjectionMatrix
-        vp=np.matmul(v,p)
-
         while not glfw.window_should_close(self.Window):
+            v=self.ViewMatrix
+            p=self.ProjectionMatrix
+            vp=np.matmul(v,p)
             glfw.poll_events()
-     
+            self.do_movement()
+            
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
             w, h = glfw.get_framebuffer_size(self.Window)
             self.updateProjectionMatrix(w,h)
-
+            self.initViewMatrix()
+            
             for o in objects:
                 o.updateTRSMatrices()
                 o.updateModelMatrix()
                 mvp=np.matmul(o.ModelMatrix,vp)
                 o.Shader.draw(mvp)
-
+                
             glfw.swap_buffers(self.Window)
 
         self.CloseWindow()
 
-
     def CloseWindow(self):
         glfw.terminate()
+
 
 
 class Object3D:
