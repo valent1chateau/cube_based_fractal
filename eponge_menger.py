@@ -134,14 +134,14 @@ class Cube(Object3D):
                 L.append(cube6)
                 Cube(taille_cube,xf,yf,zf,(m+1.0)/n).fractale_eponge_menger_remix(taille_cube,m+1,n,L,xf,yf,zf,6)
             
-    """
+    
     #Rotation de l'objet 3D
     def updateTRSMatrices(self):
         time=glfw.get_time()
         rot_x = pyrr.Matrix44.from_x_rotation(0.6 * time)
         rot_y = pyrr.Matrix44.from_y_rotation(0.8 * time)
         self.R=np.matmul(rot_x,rot_y)
-    """
+    
 
 def main():
     
@@ -154,7 +154,8 @@ def main():
     position_fenetre_y=200
 
     #**** CAMERA ****
-    cam.sensibilite_souris = 1
+    cam.sensibilite_souris = 0.5
+    velocite=0.1
     
     #**** CUBE FRACTALE ****
     taille_cube = 6
@@ -162,6 +163,8 @@ def main():
     x=-3 #Position du cube de génération 0
     y=3
     z=0
+    
+    #**************************************
     
     #Lancement de la fenetre
     window=Window(longueur,hauteur,"Projet IN55 - Fractale Cube",position_fenentre_x,position_fenetre_y)
@@ -175,7 +178,7 @@ def main():
     Cube(taille_cube,x,y,z,(0.0+1.0)/1.0).fractale_eponge_menger_remix(taille_cube,0,nombre_generation+1,objects,x,y,z,0)
 
     #Rendu visuel de la liste d'objet
-    window.render(objects)
+    window.render(objects,velocite)
     
 if __name__ == "__main__":
     main()

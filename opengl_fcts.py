@@ -87,15 +87,15 @@ class Window:
         self.updateProjectionMatrix(width,height)
        
 
-    def do_movement(self):
+    def do_movement(self,velocity):
         if left:
-            cam.process_keyboard("LEFT", 0.05)
+            cam.process_keyboard("LEFT", velocity)
         if right:
-            cam.process_keyboard("RIGHT", 0.05)
+            cam.process_keyboard("RIGHT", velocity)
         if forward:
-            cam.process_keyboard("FORWARD", 0.05)
+            cam.process_keyboard("FORWARD", velocity)
         if backward:
-            cam.process_keyboard("BACKWARD", 0.05)  
+            cam.process_keyboard("BACKWARD", velocity)  
 
     def updateProjectionMatrix(self,width,height):
         fov = 60
@@ -117,7 +117,7 @@ class Window:
         self.ViewMatrix = cam.get_view_matrix()
         
         
-    def render(self,objects):
+    def render(self,objects,velocity):
         glClearColor(0.0, 0.0, 0.0, 1.0)
         glEnable(GL_DEPTH_TEST)
         glDisable(GL_CULL_FACE)
@@ -129,7 +129,7 @@ class Window:
             vp=np.matmul(v,p)
             
             glfw.poll_events()
-            self.do_movement()
+            self.do_movement(velocity)
             
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
